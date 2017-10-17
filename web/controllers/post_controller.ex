@@ -90,12 +90,19 @@ defmodule SimpleAuth.PostController do
         end
     end
 
-    def delete(conn, %{"id" => id}, current_user) do        
-        current_user |> user_post_by_id(id) |> Repo.delete!
-        
-        conn
-            |> put_flash(:info, "Post was deleted successfully")
-            |> redirect(to: user_post_path(conn, :index, current_user.id))
+    def delete(conn, %{"user_id" => user_id, "id" => id}, current_user) do
+        user = User |> Repo.get!(user_id)
+        post = user |> user_post_by_id(id) |> Repo.preload(:user)
+        if current_user.id == post.user.id || current_user.is_admin do
+            Repo.delete!(post)
+            conn
+                |> put_flash(:info, "Post was deleted successfully")
+                |> redirect(to: user_post_path(conn, :index, user.id))
+        else
+            conn
+                |> put_flash(:info, "You can’t delete this post")
+                |> redirect(to: user_post_path(conn, :show, user.id, post.id))
+        end
     end
 
     defp user_posts(user) do

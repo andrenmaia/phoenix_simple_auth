@@ -25,7 +25,7 @@ defmodule SimpleAuth.Router do
   end
 
   pipeline :admin_required do
-    
+    plug SimpleAuth.CheckAdmin
   end
 
   scope "/", SimpleAuth do
