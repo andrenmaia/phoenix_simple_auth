@@ -1,0 +1,19 @@
+version: "3.3"
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-database
+    ports:
+      - 5432:5432
+    networks:
+      - pg
+  postgres-admin:
+    image: thajeztah/pgadmin4:latest
+    container_name: pgadmin
+    ports:
+      - 5050:5050
+    networks:
+      - pg
+networks:
+  pg:
+    external: false
